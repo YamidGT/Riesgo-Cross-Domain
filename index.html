@@ -242,12 +242,33 @@
   .cvss .n{font-family:var(--font-display);font-weight:800;font-size:34px;color:var(--hazard);}
   .cvss .l{font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;color:var(--ink-dim);line-height:1.4;text-transform:uppercase;}
 
+  .node-icon.ok{border-color:var(--ok);background:rgba(89,217,140,.12);}
+  .link.ok{background:var(--ok);}
+  .link.ok::before,.link.ok::after{background:var(--ok);}
+  .link.ok .proto{color:var(--ok);}
+  .tag-ok{color:var(--ok);font-weight:600;}
+
+  .doc-links{
+    display:flex;gap:18px;flex-wrap:wrap;
+    padding-block:18px;border-top:1px dashed var(--border);
+  }
+  .doc-links a{
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.03em;
+    color:var(--ink-dim);text-decoration:none;border-bottom:1px solid var(--border-strong);
+    padding-bottom:2px;
+  }
+  .doc-links a:hover{color:var(--teal);border-color:var(--teal);}
+
   footer{
-    border-top:1px solid var(--border);margin-top:14px;padding-block:24px 44px;
+    border-top:1px solid var(--border);margin-top:0;padding-block:20px 44px;
     display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
     font-size:12px;color:var(--ink-faint);font-family:var(--font-mono);
   }
   footer a{color:var(--ink-dim);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  }
 </style>
 </head>
 <body>
@@ -358,6 +379,11 @@
     </div>
   </div>
 
+  <div class="doc-links">
+    <a href="https://drive.google.com/drive/folders/1yBF9gWqbgzPZCqhT0519UhAWw_tc6VOK?usp=sharing" target="_blank" rel="noopener">→ Ver el paper completo (PDF)</a>
+    <a href="https://github.com/YamidGT/Riesgo-Cross-Domain" target="_blank" rel="noopener">→ Código fuente en GitHub</a>
+  </div>
+
   <footer>
     <span>Yamid Alfonso González Torres — Ing. de Sistemas y Computación, Universidad Nacional de Colombia · JCUN 2026</span>
     <span>Simulación ilustrativa con fines académicos</span>
@@ -456,6 +482,27 @@
         ]);
       }
     },
+    {
+      label:'Mitigación',
+      run(){
+        clearNodes();
+        nodeMcp.classList.add('done');
+        nodeAgent.classList.add('warn');
+        nodeMhs.classList.add('ok');
+        link1.classList.add('live');
+        link2.classList.add('ok');
+        pulse1.classList.remove('run'); void pulse1.offsetWidth; pulse1.classList.add('run');
+        typeLines([
+          {t:'agente: instrucción embebida detectada de nuevo', c:'tag-warn'},
+          {t:'→ acción propuesta: emitir comando a dispositivo', c:'tag-warn'},
+          {t:'  enlazado', c:'tag-warn'},
+          {t:'', c:''},
+          {t:'REQ-01 activo: confirmación humana requerida', c:'tag-ok'},
+          {t:'operador: acción RECHAZADA', c:'tag-ok'},
+          {t:'MHS: comando no ejecutado — actuador en reposo', c:'tag-ok'},
+        ]);
+      }
+    },
   ];
 
   let idx = -1;
@@ -463,9 +510,9 @@
   let timer = null;
 
   function clearNodes(){
-    [nodeMcp,nodeAgent,nodeMhs].forEach(n=>n.classList.remove('active','warn','alert'));
+    [nodeMcp,nodeAgent,nodeMhs].forEach(n=>n.classList.remove('active','warn','alert','ok'));
     link1.classList.remove('live');
-    link2.classList.remove('live');
+    link2.classList.remove('live','ok');
     arm.style.transform = 'rotate(0deg)';
     forearm.style.transform = 'rotate(0deg)';
   }
