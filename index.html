@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Riesgo Cross-Domain — MCP + MHS</title>
 <meta name="description" content="Simulación interactiva de cómo un exploit ya probado en MCP puede propagarse a una acción física no autorizada vía MHS.">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Cdefs%3E%3Cpattern%20id='h'%20width='8'%20height='8'%20patternTransform='rotate(45)'%20patternUnits='userSpaceOnUse'%3E%3Crect%20width='4'%20height='8'%20fill='%23ffc400'/%3E%3Crect%20x='4'%20width='4'%20height='8'%20fill='%230a0a0a'/%3E%3C/pattern%3E%3C/defs%3E%3Crect%20width='32'%20height='32'%20rx='6'%20fill='%230a1620'/%3E%3Crect%20x='5'%20y='5'%20width='22'%20height='22'%20rx='3'%20fill='url(%23h)'%20stroke='%235fd0c9'%20stroke-width='1.5'/%3E%3C/svg%3E">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yamidgt.github.io/Riesgo-Cross-Domain/">
+<meta property="og:title" content="Riesgo Cross-Domain — MCP + MHS">
+<meta property="og:description" content="Simulación interactiva de cómo un exploit ya probado en MCP puede propagarse a una acción física no autorizada vía MHS.">
+<meta property="og:image" content="https://yamidgt.github.io/Riesgo-Cross-Domain/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Riesgo Cross-Domain — MCP + MHS">
+<meta name="twitter:description" content="Simulación interactiva de cómo un exploit ya probado en MCP puede propagarse a una acción física no autorizada vía MHS.">
+<meta name="twitter:image" content="https://yamidgt.github.io/Riesgo-Cross-Domain/assets/og-image.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root{
@@ -139,6 +154,8 @@
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
   }
+  .step-dot:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+  button:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
   .step-dot.done{border-color:var(--teal);color:var(--teal);}
   .step-dot.active{border-color:var(--hazard);color:#fff;background:var(--hazard-dim);}
 
@@ -538,7 +555,13 @@
       d.className = 'step-dot' + (i < idx ? ' done' : '') + (i===idx ? ' active' : '');
       d.textContent = i+1;
       d.title = s.label;
+      d.tabIndex = 0;
+      d.setAttribute('role', 'button');
+      d.setAttribute('aria-label', 'Paso ' + (i+1) + ': ' + s.label);
       d.addEventListener('click', ()=>{ stopPlay(); goTo(i); });
+      d.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); stopPlay(); goTo(i); }
+      });
       stepsWrap.appendChild(d);
     });
   }
