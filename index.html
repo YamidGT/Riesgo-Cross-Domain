@@ -5,26 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Riesgo Cross-Domain — MCP + MHS</title>
 <meta name="description" content="Simulación interactiva de cómo un exploit ya probado en MCP puede propagarse a una acción física no autorizada vía MHS.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root{
     color-scheme: dark;
-    --bg:#05070a;
-    --bg-grid: radial-gradient(circle at 1px 1px, #10161d 1px, transparent 0);
-    --panel:#0d131a;
-    --panel-2:#101820;
-    --border:#1c2733;
-    --text:#dbe6ee;
-    --text-dim:#7c8b9a;
-    --text-faint:#4c5866;
-    --cyan:#33d6ff;
-    --cyan-dim:#0e4a5c;
-    --amber:#ffb020;
-    --amber-dim:#5c4213;
-    --red:#ff3d63;
-    --red-dim:#4a1420;
-    --green:#00e08f;
-    --font-display:'Unbounded', system-ui, sans-serif;
+    --bg:#0a1620;
+    --panel:#0d1e2a;
+    --panel-2:#0f2430;
+    --paper:#0e2028;
+    --border:#22404f;
+    --border-strong:#3d6577;
+    --ink:#e2ecf1;
+    --ink-dim:#8ba1ac;
+    --ink-faint:#4d6572;
+    --teal:#5fd0c9;
+    --teal-dim:#12333a;
+    --hazard:#ffc400;
+    --hazard-dim:#3a2c05;
+    --danger:#ff6a4a;
+    --ok:#59d98c;
+    --font-display:'Big Shoulders Stencil', 'Arial Narrow', sans-serif;
     --font-body:'IBM Plex Sans', system-ui, sans-serif;
     --font-mono:'IBM Plex Mono', ui-monospace, monospace;
   }
@@ -32,291 +32,222 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--bg);
-    background-image:var(--bg-grid);
-    background-size:22px 22px;
-    color:var(--text);
+    background-color:var(--bg);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(95,208,201,.055) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(90deg, rgba(95,208,201,.055) 0 1px, transparent 1px 34px);
+    color:var(--ink);
     font-family:var(--font-body);
     line-height:1.55;
     padding-inline:20px;
   }
 
   .wrap{max-width:980px;margin:0 auto;}
-
-  a{color:var(--cyan);}
+  a{color:var(--teal);}
 
   /* ---------- HERO ---------- */
-  .hero{
-    padding-block:56px 36px;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-  }
-  .eyebrow{
+  .hero{padding-block:52px 32px;display:flex;flex-direction:column;gap:18px;}
+
+  .advisory-tag{
+    display:inline-flex;align-items:center;gap:10px;
+    align-self:flex-start;
     font-family:var(--font-mono);
-    font-size:12.5px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--amber);
-    display:flex;
-    align-items:center;
-    gap:10px;
+    font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-dim);
+    border:1px solid var(--border-strong);
+    border-left:5px solid var(--hazard);
+    background:var(--panel);
+    padding:7px 14px 7px 11px;
   }
-  .eyebrow::before{
-    content:"";
-    width:7px;height:7px;border-radius:50%;
-    background:var(--amber);
-    box-shadow:0 0 10px var(--amber);
-  }
+  .advisory-tag b{color:var(--hazard);font-weight:600;}
+
   h1{
     font-family:var(--font-display);
     font-weight:800;
-    font-size:clamp(30px, 6vw, 52px);
-    line-height:1.06;
+    font-size:clamp(34px, 6.4vw, 58px);
+    line-height:.98;
+    letter-spacing:.01em;
     margin:0;
     text-wrap:balance;
-    color:#f3f8fb;
+    color:#f4f9fb;
+    text-transform:uppercase;
   }
-  h1 span{color:var(--cyan);}
-  .sub{
-    font-size:16.5px;
-    color:var(--text-dim);
-    max-width:60ch;
-  }
-  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  h1 span{color:var(--teal);}
+  .sub{font-size:16.5px;color:var(--ink-dim);max-width:60ch;font-family:var(--font-body);}
+
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .badge{
     font-family:var(--font-mono);
-    font-size:12px;
-    padding:5px 10px;
-    border-radius:6px;
+    font-size:11.5px;letter-spacing:.02em;
+    padding:6px 11px;
     border:1px solid var(--border);
-    color:var(--text-dim);
+    color:var(--ink-dim);
     background:var(--panel);
   }
-  .badge b{color:var(--text);}
+  .badge b{color:var(--ink);}
 
   /* ---------- STAGE CARD ---------- */
   .stage-card{
-    background:linear-gradient(180deg,var(--panel),var(--panel-2));
-    border:1px solid var(--border);
-    border-radius:16px;
+    background:var(--panel);
+    border:1px solid var(--border-strong);
     padding:28px;
-    margin-block:24px;
+    margin-block:26px;
+    position:relative;
+  }
+  .stage-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:repeating-linear-gradient(-45deg, var(--hazard) 0 14px, #14232c 14px 28px);
+    opacity:.55;
   }
   .stage-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:16px;
-    flex-wrap:wrap;
-    margin-bottom:22px;
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:16px;flex-wrap:wrap;margin-bottom:20px;
   }
   .stage-title{
     font-family:var(--font-display);
-    font-weight:600;
-    font-size:19px;
-    color:#f3f8fb;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    font-size:21px;
+    color:#f4f9fb;
   }
-  .stage-desc{color:var(--text-dim);font-size:14px;max-width:48ch;margin-top:4px;}
+  .stage-desc{color:var(--ink-dim);font-size:13.6px;max-width:48ch;margin-top:5px;}
 
   .controls{display:flex;gap:10px;flex-wrap:wrap;}
   button{
     font-family:var(--font-mono);
-    font-size:13px;
-    letter-spacing:.03em;
+    font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;
     padding:10px 16px;
-    border-radius:8px;
-    border:1px solid var(--border);
+    border-radius:2px;
+    border:1px solid var(--border-strong);
     background:var(--panel-2);
-    color:var(--text);
+    color:var(--ink);
     cursor:pointer;
-    transition:border-color .15s, color .15s, background .15s;
+    transition:border-color .15s, background .15s, color .15s;
   }
-  button:hover{border-color:var(--cyan);color:#fff;}
-  button.primary{
-    background:var(--cyan);
-    color:#031017;
-    border-color:var(--cyan);
-    font-weight:600;
-  }
-  button.primary:hover{filter:brightness(1.08);}
+  button:hover{border-color:var(--teal);color:#fff;}
+  button.primary{background:var(--hazard);color:#1a1300;border-color:var(--hazard);font-weight:600;}
+  button.primary:hover{filter:brightness(1.06);color:#1a1300;}
   button:disabled{opacity:.4;cursor:not-allowed;}
 
   .steps{display:flex;gap:8px;margin-top:14px;}
   .step-dot{
-    font-family:var(--font-mono);
-    font-size:12px;
-    width:30px;height:30px;
-    border-radius:50%;
-    border:1px solid var(--border);
-    background:var(--panel-2);
-    color:var(--text-faint);
+    font-family:var(--font-mono);font-size:12px;
+    width:28px;height:28px;border-radius:2px;
+    border:1px solid var(--border-strong);
+    background:var(--panel-2);color:var(--ink-faint);
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
   }
-  .step-dot.done{border-color:var(--cyan);color:var(--cyan);}
-  .step-dot.active{border-color:var(--red);color:#fff;background:var(--red-dim);box-shadow:0 0 0 3px rgba(255,61,99,.15);}
+  .step-dot.done{border-color:var(--teal);color:var(--teal);}
+  .step-dot.active{border-color:var(--hazard);color:#fff;background:var(--hazard-dim);}
 
   /* ---------- DIAGRAM ---------- */
-  .diagram{
-    display:flex;
-    align-items:flex-start;
-    padding:20px 4px 6px;
-  }
-  .node{
-    flex:0 0 128px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    text-align:center;
-  }
+  .diagram{display:flex;align-items:flex-start;padding:22px 4px 6px;}
+  .node{flex:0 0 128px;display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;}
   .node-icon{
-    width:84px;height:84px;
-    border-radius:18px;
-    border:1.5px solid var(--border);
+    width:80px;height:80px;border-radius:4px;
+    border:2px solid var(--border-strong);
     background:var(--panel-2);
     display:flex;align-items:center;justify-content:center;
-    transition:border-color .3s, box-shadow .3s, background .3s;
+    position:relative;
+    transition:border-color .3s, background .3s;
   }
-  .node-icon svg{width:46px;height:46px;}
-  .node-label{font-family:var(--font-mono);font-size:12px;color:var(--text-dim);}
-  .node-tag{font-family:var(--font-mono);font-size:10.5px;color:var(--text-faint);letter-spacing:.05em;}
-
-  .node-icon.active{border-color:var(--cyan);box-shadow:0 0 22px -4px var(--cyan);background:var(--cyan-dim);}
-  .node-icon.warn{border-color:var(--amber);box-shadow:0 0 22px -4px var(--amber);background:var(--amber-dim);}
-  .node-icon.alert{border-color:var(--red);box-shadow:0 0 26px -2px var(--red);background:var(--red-dim);}
-  .node-icon.alert svg{animation:shake .35s ease-in-out infinite;}
-  @keyframes shake{
-    0%,100%{transform:translateX(0) rotate(0);}
-    25%{transform:translateX(-1.5px) rotate(-1deg);}
-    75%{transform:translateX(1.5px) rotate(1deg);}
+  .node-icon::before,.node-icon::after{
+    content:"";position:absolute;width:9px;height:9px;border:1.5px solid var(--border-strong);
+    top:-5px;left:-5px;border-right:none;border-bottom:none;
   }
+  .node-icon::after{left:auto;right:-5px;border-right:1.5px solid var(--border-strong);border-left:none;}
+  .node-icon svg{width:42px;height:42px;}
+  .node-label{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.03em;}
+  .node-tag{font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);letter-spacing:.04em;}
 
-  .link{flex:1 1 auto;position:relative;height:2px;background:var(--border);margin-top:41px;}
+  .node-icon.active{border-color:var(--teal);background:var(--teal-dim);}
+  .node-icon.warn{border-color:var(--hazard);background:var(--hazard-dim);}
+  .node-icon.alert{
+    border-color:var(--hazard);
+    background-image:repeating-linear-gradient(135deg, rgba(255,196,0,.28) 0 10px, rgba(8,8,8,.4) 10px 20px);
+    background-size:200% 200%;
+    animation:hazardmarch 1.1s linear infinite;
+  }
+  @keyframes hazardmarch{from{background-position:0 0;}to{background-position:28px 0;}}
+
+  .link{flex:1 1 auto;position:relative;height:2px;background:var(--border-strong);margin-top:39px;}
+  .link::before,.link::after{content:"";position:absolute;top:-4px;width:1.5px;height:10px;background:var(--border-strong);}
+  .link::before{left:0;} .link::after{right:0;}
   .link .pulse{
-    position:absolute;top:50%;left:0;
-    width:10px;height:10px;border-radius:50%;
+    position:absolute;top:50%;left:0;width:9px;height:9px;
     transform:translate(-50%,-50%);
-    background:var(--cyan);
-    box-shadow:0 0 12px var(--cyan);
-    opacity:0;
+    background:var(--teal);opacity:0;
   }
-  .link.live{background:var(--cyan);}
-  .link.live.mhs{background:var(--amber);}
-  .link .pulse.mhs{background:var(--amber);box-shadow:0 0 12px var(--amber);}
+  .link.live{background:var(--teal);}
+  .link.live::before,.link.live::after{background:var(--teal);}
+  .link.live.mhs{background:var(--hazard);}
+  .link.live.mhs::before,.link.live.mhs::after{background:var(--hazard);}
+  .link .pulse.mhs{background:var(--hazard);}
   .link .proto{
-    position:absolute;top:-22px;left:50%;transform:translateX(-50%);
-    font-family:var(--font-mono);font-size:11px;color:var(--text-faint);
+    position:absolute;top:-21px;left:50%;transform:translateX(-50%);
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.05em;color:var(--ink-faint);
   }
-  .link.live .proto{color:var(--cyan);}
-  .link.live.mhs .proto{color:var(--amber);}
+  .link.live .proto{color:var(--teal);}
+  .link.live.mhs .proto{color:var(--hazard);}
 
-  @keyframes travel{
-    0%{left:0;opacity:1;}
-    92%{opacity:1;}
-    100%{left:100%;opacity:0;}
-  }
+  @keyframes travel{0%{left:0;opacity:1;}92%{opacity:1;}100%{left:100%;opacity:0;}}
   .pulse.run{animation:travel 1.1s linear forwards;}
 
-  /* ---------- TERMINAL ---------- */
-  .terminal{
-    margin-top:22px;
-    background:#04070a;
-    border:1px solid var(--border);
-    border-radius:10px;
-    overflow:hidden;
-  }
+  /* ---------- TERMINAL / LOG SHEET ---------- */
+  .terminal{margin-top:22px;background:var(--paper);border:1px solid var(--border);border-top:2px dashed var(--border-strong);}
   .terminal-bar{
-    display:flex;align-items:center;gap:6px;
-    padding:9px 12px;
-    background:#0a0f14;
-    border-bottom:1px solid var(--border);
-    font-family:var(--font-mono);font-size:11.5px;color:var(--text-faint);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 12px;background:var(--panel-2);border-bottom:1px solid var(--border);
+    font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);
+    text-transform:uppercase;letter-spacing:.08em;
   }
-  .dot3{width:8px;height:8px;border-radius:50%;background:#2a3542;}
-  .terminal-body{
-    padding:16px 18px;
-    font-family:var(--font-mono);
-    font-size:13px;
-    min-height:118px;
-    color:var(--text);
-  }
+  .terminal-body{padding:16px 18px;font-family:var(--font-mono);font-size:13px;min-height:118px;color:var(--ink);}
   .terminal-body .ln{margin-bottom:6px;opacity:0;animation:appear .25s forwards;white-space:pre-wrap;}
   @keyframes appear{to{opacity:1;}}
-  .tag-ok{color:var(--green);}
-  .tag-warn{color:var(--amber);}
-  .tag-bad{color:var(--red);font-weight:600;}
-  .dim{color:var(--text-faint);}
-  .hl{background:rgba(255,61,99,.16);color:#ffcdd6;padding:0 3px;border-radius:3px;}
-  .caret{display:inline-block;width:7px;height:14px;background:var(--cyan);vertical-align:-2px;animation:blink 1s step-end infinite;}
+  .tag-warn{color:var(--hazard);}
+  .tag-bad{color:var(--danger);font-weight:600;}
+  .dim{color:var(--ink-faint);}
+  .hl{background:rgba(255,196,0,.18);color:#ffe9a8;padding:0 3px;}
+  .caret{display:inline-block;width:7px;height:14px;background:var(--teal);vertical-align:-2px;animation:blink 1s step-end infinite;}
   @keyframes blink{50%{opacity:0;}}
 
   /* ---------- FINDINGS ---------- */
-  .findings{
-    display:grid;
-    grid-template-columns:1.1fr .9fr;
-    gap:20px;
-    margin-block:24px;
-  }
+  .findings{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;margin-block:26px;}
   @media (max-width:680px){
     .findings{grid-template-columns:1fr;}
-    .diagram{flex-direction:column;align-items:center;gap:14px;}
+    .diagram{flex-direction:column;align-items:center;gap:16px;}
     .link{display:none;}
   }
 
-  .panel{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:22px;
-  }
+  .panel{background:var(--panel);border:1px solid var(--border-strong);padding:22px;}
   .panel h2{
-    font-family:var(--font-display);
-    font-size:15px;
-    margin:0 0 14px;
-    color:#f3f8fb;
-    display:flex;align-items:center;gap:8px;
+    font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.02em;
+    font-size:17px;margin:0 0 14px;color:#f4f9fb;
   }
   .panel ul{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:11px;}
-  .panel li{
-    display:flex;gap:10px;
-    font-size:13.6px;color:var(--text-dim);
-    padding-bottom:11px;
-    border-bottom:1px dashed var(--border);
-  }
+  .panel li{display:flex;gap:11px;font-size:13.4px;color:var(--ink-dim);padding-bottom:11px;border-bottom:1px dashed var(--border);}
   .panel li:last-child{border-bottom:none;padding-bottom:0;}
-  .panel li b{color:var(--text);}
-  .num{
-    font-family:var(--font-mono);
-    color:var(--cyan);
-    flex:none;
-  }
+  .panel li b{color:var(--ink);}
+  .num{font-family:var(--font-mono);color:var(--teal);flex:none;font-size:12px;padding-top:1px;}
 
   .cvss{
-    display:flex;align-items:baseline;gap:10px;
-    background:var(--red-dim);
-    border:1px solid rgba(255,61,99,.35);
-    border-radius:10px;
-    padding:14px 16px;
-    margin-bottom:16px;
+    display:flex;align-items:stretch;gap:0;
+    border:1px solid var(--border-strong);
+    margin-bottom:16px;overflow:hidden;
   }
-  .cvss .n{font-family:var(--font-display);font-weight:800;font-size:32px;color:#ff7d94;}
-  .cvss .l{font-family:var(--font-mono);font-size:11.5px;color:#ffb9c6;line-height:1.4;}
+  .cvss .bar{width:8px;background:var(--hazard);flex:none;}
+  .cvss .body{display:flex;align-items:baseline;gap:10px;padding:12px 16px;background:var(--panel-2);}
+  .cvss .n{font-family:var(--font-display);font-weight:800;font-size:34px;color:var(--hazard);}
+  .cvss .l{font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;color:var(--ink-dim);line-height:1.4;text-transform:uppercase;}
 
   footer{
-    border-top:1px solid var(--border);
-    margin-top:12px;
-    padding-block:26px 44px;
-    display:flex;
-    justify-content:space-between;
-    gap:16px;
-    flex-wrap:wrap;
-    font-size:12.5px;
-    color:var(--text-faint);
-    font-family:var(--font-mono);
+    border-top:1px solid var(--border);margin-top:14px;padding-block:24px 44px;
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    font-size:12px;color:var(--ink-faint);font-family:var(--font-mono);
   }
-  footer a{color:var(--text-dim);}
+  footer a{color:var(--ink-dim);}
 </style>
 </head>
 <body>
@@ -324,11 +255,11 @@
 <div class="wrap">
 
   <div class="hero">
-    <div class="eyebrow">JCUN 2026 · Demostración técnica</div>
+    <div class="advisory-tag">Aviso técnico <b>SB-2026-014</b> · JCUN 2026</div>
     <h1>Del <span>código</span> a la palanca física</h1>
     <p class="sub">Una vulnerabilidad de software en MCP ya documentada, seguida hasta el punto donde MHS la convierte en movimiento real. Ejecuta la cadena completa abajo.</p>
     <div class="badges">
-      <span class="badge">Basado en <b>CVE-2025-6514</b></span>
+      <span class="badge">Ref. <b>CVE-2025-6514</b></span>
       <span class="badge">Invariant Labs, <b>2025</b></span>
       <span class="badge">MHS presentado <b>agosto 2026</b></span>
     </div>
@@ -337,7 +268,7 @@
   <div class="stage-card">
     <div class="stage-head">
       <div>
-        <div class="stage-title">Cadena de propagación cross-domain</div>
+        <div class="stage-title">Secuencia reconstruida del incidente</div>
         <div class="stage-desc">Simulación ilustrativa del mecanismo descrito en el paper — reconstruye una clase de ataque documentada, no una intrusión en vivo.</div>
       </div>
       <div class="controls">
@@ -352,9 +283,9 @@
       <div class="node">
         <div class="node-icon" id="node-mcp">
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 44a11 11 0 0 1-1-21.9A14 14 0 0 1 46 20a10 10 0 0 1-2 24H20Z" stroke="currentColor" stroke-width="2.4" style="color:var(--text)"/>
-            <rect x="25" y="27" width="16" height="12" rx="1.5" stroke="currentColor" stroke-width="2" style="color:var(--text)"/>
-            <path d="M28 33h4M35 30l-2.5 3 2.5 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)"/>
+            <path d="M20 44a11 11 0 0 1-1-21.9A14 14 0 0 1 46 20a10 10 0 0 1-2 24H20Z" stroke="currentColor" stroke-width="2.4" style="color:var(--ink)"/>
+            <rect x="25" y="27" width="16" height="12" rx="1.5" stroke="currentColor" stroke-width="2" style="color:var(--ink)"/>
+            <path d="M28 33h4M35 30l-2.5 3 2.5 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink)"/>
           </svg>
         </div>
         <div class="node-label">Servidor MCP</div>
@@ -366,12 +297,12 @@
       <div class="node">
         <div class="node-icon" id="node-agent">
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="32" cy="14" r="2.6" stroke="currentColor" stroke-width="2" style="color:var(--text)"/>
-            <line x1="32" y1="16.6" x2="32" y2="22" stroke="currentColor" stroke-width="2" style="color:var(--text)"/>
-            <rect x="16" y="22" width="32" height="26" rx="8" stroke="currentColor" stroke-width="2.4" style="color:var(--text)"/>
-            <circle cx="25" cy="34" r="2.8" fill="currentColor" style="color:var(--text)"/>
-            <circle cx="39" cy="34" r="2.8" fill="currentColor" style="color:var(--text)"/>
-            <path d="M25 41h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color:var(--text)"/>
+            <circle cx="32" cy="14" r="2.6" stroke="currentColor" stroke-width="2" style="color:var(--ink)"/>
+            <line x1="32" y1="16.6" x2="32" y2="22" stroke="currentColor" stroke-width="2" style="color:var(--ink)"/>
+            <rect x="16" y="22" width="32" height="26" rx="6" stroke="currentColor" stroke-width="2.4" style="color:var(--ink)"/>
+            <circle cx="25" cy="34" r="2.8" fill="currentColor" style="color:var(--ink)"/>
+            <circle cx="39" cy="34" r="2.8" fill="currentColor" style="color:var(--ink)"/>
+            <path d="M25 41h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color:var(--ink)"/>
           </svg>
         </div>
         <div class="node-label">Agente IA</div>
@@ -383,12 +314,12 @@
       <div class="node">
         <div class="node-icon" id="node-mhs">
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="14" cy="50" r="4" stroke="currentColor" stroke-width="2.2" style="color:var(--text)"/>
+            <circle cx="14" cy="50" r="4" stroke="currentColor" stroke-width="2.2" style="color:var(--ink)"/>
             <g id="armGroup" style="transform-origin:14px 50px; transition:transform .8s cubic-bezier(.4,1.6,.4,1);">
-              <line x1="14" y1="50" x2="30" y2="30" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="color:var(--text)"/>
+              <line x1="14" y1="50" x2="30" y2="30" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="color:var(--ink)"/>
               <g id="forearmGroup" style="transform-origin:30px 30px; transition:transform .8s cubic-bezier(.4,1.6,.4,1);">
-                <line x1="30" y1="30" x2="48" y2="34" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="color:var(--text)"/>
-                <path d="M48 34l6-3M48 34l4 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="color:var(--text)"/>
+                <line x1="30" y1="30" x2="48" y2="34" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="color:var(--ink)"/>
+                <path d="M48 34l6-3M48 34l4 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="color:var(--ink)"/>
               </g>
             </g>
           </svg>
@@ -399,7 +330,7 @@
     </div>
 
     <div class="terminal">
-      <div class="terminal-bar"><span class="dot3"></span><span class="dot3"></span><span class="dot3"></span><span style="margin-left:6px;">log.sim</span></div>
+      <div class="terminal-bar"><span>Registro adjunto</span><span>Anexo A</span></div>
       <div class="terminal-body" id="term">
         <div class="ln dim" style="animation-delay:.05s">esperando ejecución — pulsa «Reproducir» o un paso de arriba…</div>
       </div>
@@ -410,19 +341,19 @@
     <div class="panel">
       <h2>Lo que esto reproduce</h2>
       <ul>
-        <li><span class="num">01</span><span><b>Tool Poisoning Attack</b> (Invariant Labs, 2025): una instrucción oculta en la descripción de una herramienta MCP, invisible para quien la aprueba.</span></li>
-        <li><span class="num">02</span><span><b>CVE-2025-6514</b>, CVSS 9.6: inyección de comandos en mcp-remote — la misma clase de fallo que aquí cruza al mundo físico.</span></li>
-        <li><span class="num">03</span><span><b>MHS (agosto 2026)</b> aún no publica un modelo de amenazas: no define quién puede emitir un comando ni cómo se revoca un driver comprometido.</span></li>
+        <li><span class="num">§01</span><span><b>Tool Poisoning Attack</b> (Invariant Labs, 2025): una instrucción oculta en la descripción de una herramienta MCP, invisible para quien la aprueba.</span></li>
+        <li><span class="num">§02</span><span><b>CVE-2025-6514</b>, CVSS 9.6: inyección de comandos en mcp-remote — la misma clase de fallo que aquí cruza al mundo físico.</span></li>
+        <li><span class="num">§03</span><span><b>MHS (agosto 2026)</b> aún no publica un modelo de amenazas: no define quién puede emitir un comando ni cómo se revoca un driver comprometido.</span></li>
       </ul>
     </div>
     <div class="panel">
-      <div class="cvss"><span class="n">9.6</span><span class="l">CVSS<br>CVE-2025-6514</span></div>
+      <div class="cvss"><span class="bar"></span><span class="body"><span class="n">9.6</span><span class="l">CVSS<br>CVE-2025-6514</span></span></div>
       <h2>Mitigaciones propuestas</h2>
       <ul>
-        <li><span class="num">→</span><span>Confirmación humana antes de una acción física irreversible.</span></li>
-        <li><span class="num">→</span><span>Manifiestos de herramientas y dispositivos firmados.</span></li>
-        <li><span class="num">→</span><span>Tokens de privilegio mínimo por acción.</span></li>
-        <li><span class="num">→</span><span>Auditoría cruzada entre eventos de software y de hardware.</span></li>
+        <li><span class="num">REQ-01</span><span>Confirmación humana antes de una acción física irreversible.</span></li>
+        <li><span class="num">REQ-02</span><span>Manifiestos de herramientas y dispositivos firmados.</span></li>
+        <li><span class="num">REQ-03</span><span>Tokens de privilegio mínimo por acción.</span></li>
+        <li><span class="num">REQ-04</span><span>Auditoría cruzada entre eventos de software y de hardware.</span></li>
       </ul>
     </div>
   </div>
